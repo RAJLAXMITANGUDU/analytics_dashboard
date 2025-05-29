@@ -14,40 +14,42 @@ export interface Article {
   urlToImage: string | null;
   publishedAt: string;
 }
-
-
 export const fetchHeadlines = async (
   category: string,
   page: number
-): Promise<Article[]> => {
+): Promise<{ articles: Article[]; totalResults: number }> => {
   try {
+    
     const res = await axios.get(`${BASE}/top-headlines`, {
       params: {
         apiKey: KEY,
         category,
+        country: 'in',
         pageSize: PAGE_SIZE,
         page,
-        country: 'in',
       },
     });
-    const articles = res.data.articles as Article[];
 
-    if (articles.length > 0) {
-      return articles;
+    let articles: Article[] = res.data.articles;
+    let totalResults: number = res.data.totalResults;
+    if (articles.length === 0) {
+      const fallback = await axios.get(`${BASE}/everything`, {
+        params: {
+          apiKey: KEY,
+          q: category,
+          language: 'en',
+          sortBy: 'publishedAt',
+          pageSize: PAGE_SIZE,
+          page,
+        },
+      });
+      articles = fallback.data.articles;
+      totalResults = fallback.data.totalResults;
     }
 
-    const fallback = await axios.get(`${BASE}/everything`, {
-      params: {
-        apiKey: KEY,
-        q: category,
-        pageSize: PAGE_SIZE,
-        page,
-        sortBy: 'publishedAt',
-      },
-    });
-    return fallback.data.articles as Article[];
+    return { articles, totalResults };
   } catch (error) {
     console.error('Error fetching news:', error);
-    return [];
+    return { articles: [], totalResults: 0 };
   }
 };

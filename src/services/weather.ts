@@ -6,7 +6,6 @@ const KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
 export const getWeatherByCity = async (city: string) => {
   const url = `${BASE_URL}/weather?q=${city}&units=metric&appid=${KEY}`;
   const res = await axios.get(url);
- console.log(`the key is ${KEY}`)
   return res.data;
 };
 

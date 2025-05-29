@@ -47,7 +47,6 @@ const WeatherCard: React.FC = () => {
         setWeather(w);
 
         const raw = await get5DayForecast(cityName);
-        // pick only the forecasts at 12:00:00 each day
         const dailyNoon = raw.filter((pt: ForecastPoint) =>
           pt.dt_txt.endsWith('12:00:00')
         );

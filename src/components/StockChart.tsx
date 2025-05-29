@@ -45,7 +45,6 @@ const StockChart: React.FC<{ symbol?: string }> = ({ symbol = 'AAPL' }) => {
     );
   }
 
-  // Prepare Chart.js data
   const dates = Object.keys(series).sort();
   const prices = dates.map(d => parseFloat(series[d]['4. close']));
 
